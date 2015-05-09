@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class CustomViewAdapter extends BaseAdapter {
@@ -38,20 +39,43 @@ public class CustomViewAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		//get an instance of layout inflator
-		LayoutInflater mInflater=(LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		//create an instance of viewholder class
+		ViewHolder viewHolder;
 		
-		//inflate our view with the layout that we created earlier
-		convertView=mInflater.inflate(R.layout.layout_custom_row, parent, false);
-		
-		//get the reference of textview from our inflated view
-		TextView customTv=(TextView)convertView.findViewById(R.id.tv_custom);
+		//check if our view is null. In that case, make a new view, otherwise, just re-use the previous view
+		if(convertView==null){
+			//initialize view holder
+			viewHolder=new ViewHolder();
+			//get an instance of layout inflator
+			LayoutInflater mInflater=(LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			
+			//inflate our view with the layout that we created earlier
+			convertView=mInflater.inflate(R.layout.layout_custom_row, parent, false);
+			
+			//get the reference of textview from inflated view and put it inside viewholder instance
+			viewHolder.customTv=(TextView)convertView.findViewById(R.id.tv_custom);
+			
+			//do the same with imageview
+			viewHolder.customIv=(ImageView)convertView.findViewById(R.id.iv_launcher);
+			
+			//now store the instance of viewholder inside convertview so that we can re-use it
+			convertView.setTag(viewHolder);
+		}
+		else{
+			//convert view wasn't null. Now, we need to retake our view holder from convert view and use it
+			viewHolder=(ViewHolder)convertView.getTag();
+		}
 		
 		//set some text to it by taking it from list that we passed from activity
-		customTv.setText((String)getItem(position));
+		viewHolder.customTv.setText((String)getItem(position));
 		
 		//return the view at the end
 		return convertView;
+	}
+	
+	private class ViewHolder{
+		private TextView customTv;
+		private ImageView customIv;
 	}
 	
 	public Context getContext() {
